@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Zulu Name Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    #zulu-name {
+      font-size: 40px;
+      margin: 20px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .options button {
+      padding: 12px;
+      font-size: 18px;
+      border: 2px solid #ccc;
+      background: white;
+      cursor: pointer;
+    }
+
+    .options button:hover {
+      background: #e0e0e0;
+    }
+
+    #score, #result {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    #replay {
+      display: none;
+      margin-top: 30px;
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Do you know what this Zulu name means?</h1>
+  <div id="zulu-name">Zulu Name</div>
+  <div class="options" id="options"></div>
+  <div id="score">Score: 0/0</div>
+  <div id="result"></div>
+  <button id="replay" onclick="startGame()">Play Again</button>
+
+  <script>
+    // List of Zulu names and their English meanings
+    const zuluNames = [
+      { zulu: "Bongani", english: "Be Thankful" },
+      { zulu: "Dumisani", english: "Praise" },
+      { zulu: "Thando", english: "Love" },
+      { zulu: "Zanele", english: "We are enough" },
+      { zulu: "Sibusiso", english: "Blessing" },
+      { zulu: "Nandi", english: "Sweet" },
+      { zulu: "Lindiwe", english: "Waiting" },
+      { zulu: "Nkosi", english: "King" },
+      { zulu: "Khanyisa", english: "To shine" },
+      { zulu: "Nolwazi", english: "Knowledge" },
+      { zulu: "Ayanda", english: "Increase" },
+      { zulu: "Sipho", english: "Gift" },
+      { zulu: "Phindile", english: "Return" },
+      { zulu: "Thulani", english: "Be quiet" },
+      { zulu: "Zola", english: "Calm" },
+      { zulu: "Jabulani", english: "Rejoice" },
+      { zulu: "Lungile", english: "Good" },
+      { zulu: "Mlungisi", english: "One who brings peace" },
+      { zulu: "Thembekile", english: "Faithful" },
+      { zulu: "Mandla", english: "Power" },
+      { zulu: "Gugulethu", english: "Our Pride" },
+      { zulu: "Zinhle", english: "Beautiful" },
+      { zulu: "Nokuthula", english: "Peace" },
+      { zulu: "Kuhle", english: "Goodness" },
+      { zulu: "Vusimuzi", english: "Bringer of peace" },
+      { zulu: "Musa", english: "Mercy" },
+      { zulu: "Zandile", english: "We are enough" },
+      { zulu: "Lusanda", english: "Peaceful" },
+      { zulu: "Mokgadi", english: "Mother" },
+      { zulu: "Mpilo", english: "Life" },
+      { zulu: "Buhle", english: "Beauty" },
+      { zulu: "Sifiso", english: "Desire" },
+      { zulu: "Fikile", english: "Arrival" },
+      { zulu: "Xolani", english: "Forgiveness" },
+      { zulu: "Nokwanda", english: "We have grown" },
+      { zulu: "Nosipho", english: "Gift" },
+      { zulu: "Ngcobo", english: "Glory" },
+      { zulu: "Philani", english: "Life"},
+      { zulu: "Qhawe", english: "Hero" },
+      { zulu: "Mqobi", english: "Warrior" },
+      { zulu: "Themba", english: "Trust" },
+      { zulu: "Nkululeko", english: "Freedom" },
+      { zulu: "Mahle", english: "Beautiful" },
+      { zulu: "Nkhanyezi", english: "Star" },
+      { zulu: "Siyabonga", english: "We are thankful" },
+      { zulu: "Andile", english: "Increase"},
+      { zulu: "Bandile", english: "Increase" },
+      { zulu: "Bayanda", english: "Increase" },
+      { zulu: "Ziyanda", english: "Increase" },
+      { zulu: "Nhlanhla", english: "Lucky" },
+      { zulu: "Sne/Sinehlanhla", english: "We have luck" },
+      { zulu: "Sithembiso", english: "Promise" },
+      { zulu: "Sithembile", english: "Trust you" },
+      { zulu: "Manqoba", english: "Conqueror" },
+      { zulu: "Senzo", english: "Action" },
+      { zulu: "Aphiwe", english: "Given" },
+      { zulu: "Nontle", english: "Beautiful" },
+      { zulu: "Samkelo", english: "Welcome" },
+      { zulu: "Linda", english: "Wait" },
+      { zulu: "Thandeka", english: "To be loved" },
+      { zulu: "Mkhulisi", english: "Raise" },
+      { zulu: "Nhlankanipho", english: "Wisdom" },
+      { zulu: "Mthobisi", english: "Humble" },
+      { zulu: "Mzwandile", english: "Family has grown" },
+      { zulu: "Sisekelo", english: "Support" },
+      { zulu: "Mcendisi", english: "Savior" },
+      { zulu: "Mbali", english: "Flower" },
+      { zulu: "Sinethemba", english: "We trust" },
+      { zulu: "Siphesihle", english: "Beautiful Gift" },
+      { zulu: "Lindokuhle", english: "Waiting for Beauty/Good" },
+      { zulu: "Bakithi", english: "Prosperous" },
+      { zulu: "Lindani", english: "Expect" },
+      { zulu: "Mqondisi", english: "Leader" },
+      { zulu: "Sifundo", english: "Learn" },
+      { zulu: "Wakhile", english: "He has grown" },
+      { zulu: "Sakhile", english: "We have grown" },
+      { zulu: "Ndumiso", english: "Praise" },
+      { zulu: "Ngwenya", english: "Crocodile" },
+      { zulu: "Dube", english: "Zebra" },
+      { zulu: "Ndlovu", english: "Elephant" },
+      { zulu: "Zodwa", english: "Independent" },
+      { zulu: "Njabulo", english: "Happy" }
+     ];
+
+    let score = 0;
+    let questionCount = 0;
+    let correctAnswer = "";
+
+    // Function to shuffle the answers
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    // Load a random question
+    function loadQuestion() {
+      const questionSet = shuffle([...zuluNames]).slice(0, 4);
+      const chosenName = questionSet[Math.floor(Math.random() * 4)];
+
+      document.getElementById("zulu-name").textContent = chosenName.zulu;
+      correctAnswer = chosenName.english;
+
+      const optionsContainer = document.getElementById("options");
+      optionsContainer.innerHTML = "";
+
+      // Adding the options
+      questionSet.forEach(item => {
+        const btn = document.createElement("button");
+        btn.textContent = item.english;
+        btn.onclick = () => checkAnswer(item.english);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    // Check if the player's answer is correct
+    function checkAnswer(answer) {
+      questionCount++;
+      if (answer === correctAnswer) {
+        score++;
+        document.getElementById("result").textContent = "✅ Correct!";
+      } else {
+        document.getElementById("result").textContent = `❌ Wrong! The correct answer is "${correctAnswer}".`;
+      }
+
+      document.getElementById("score").textContent = `Score: ${score}/${questionCount}`;
+
+      if (questionCount >= 10) {
+        endGame();
+      } else {
+        setTimeout(() => {
+          document.getElementById("result").textContent = "";
+          loadQuestion();
+        }, 1000);
+      }
+    }
+
+    // End the game and show the result
+    function endGame() {
+      const result = document.getElementById("result");
+      if (score >= 8) {
+        result.textContent = `🎉 You win! Final score: ${score}/10`;
+      } else {
+        result.textContent = `😢 You lose! Final score: ${score}/10`;
+      }
+      document.getElementById("replay").style.display = "inline-block";
+    }
+
+    // Start the game
+    function startGame() {
+      score = 0;
+      questionCount = 0;
+      document.getElementById("score").textContent = "Score: 0/0";
+      document.getElementById("result").textContent = "";
+      document.getElementById("replay").style.display = "none";
+      loadQuestion();
+    }
+
+    // Initialize the game
+    startGame();
+  </script>
+</body>
+</html>
